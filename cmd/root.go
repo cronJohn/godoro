@@ -3,12 +3,16 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	cfgFile string
+	tags    string
+)
 
 // > app
 var rootCmd = &cobra.Command{
@@ -17,6 +21,10 @@ var rootCmd = &cobra.Command{
 	Long:  `Manage your life or something...`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Welcome!")
+
+		for _, tag := range strings.Fields(tags) {
+			fmt.Printf("Tag: %v\n", tag)
+		}
 	},
 }
 
@@ -33,6 +41,9 @@ func init() {
 
 	rootCmd.PersistentFlags().
 		StringVar(&cfgFile, "config", "", "config file (default is $HOME/.godoro.yaml)")
+
+	rootCmd.PersistentFlags().
+		StringVarP(&tags, "tags", "t", "", "Tags for the session")
 }
 
 // initConfig reads in config file and ENV variables if set.

@@ -15,30 +15,34 @@
 `-m [arg]`
 - Specify minutes
 
-`-h [arg]`
+`-o [arg]`
 - Specify hours
 
 `-t [arg1 arg2 ...]`
 - Specify tags for the current pomodoro session
 
 ### View history
-`godoro history`
+- [ ] `godoro history`
 
 ## TUI mode
-`godoro tui`
+- [ ] `godoro tui`
 
 ### View all sessions
-- Type 'a'
+- [ ] Type 'a'
 
 ### Create a new pomodoro
-- Type 'n'
+- [ ] Type 'n'
 - Enter the name and any tag info
 
 ### Pause a pomodoro
-- Type 's'
+- [ ] Type 's'
 - Enter the name of the session you want to pause
 
 ### Delete a pomodoro
-- Type 'd'
+- [ ] Type 'd'
 - Enter the name of the session you want to delete
+
+---
+# Help
+- Use the `-h` or `--help` flags to view help info
 
