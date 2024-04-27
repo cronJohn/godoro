@@ -9,9 +9,12 @@ import (
 	"github.com/cronJohn/godoro/cmd"
 )
 
-func main() {
+func init() {
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	log.Logger = log.With().Caller().Logger() // add file name and line number
+	log.Logger = log.With().Caller().Logger()
+}
 
+func main() {
 	cmd.Execute()
 }

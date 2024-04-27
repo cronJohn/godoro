@@ -2,66 +2,37 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"os/signal"
-	"time"
 
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
-	"github.com/cronJohn/godoro/types/timeutil"
+	"github.com/cronJohn/godoro/util"
 )
 
-var secs, mins, hours int
-
-const (
-	TimerMode int = iota
-	StopwatchMode
+var (
+	FLAG_SECOND, FLAG_MINUTE, FLAG_HOUR int
+	FLAG_TAGS                           util.FlagList
 )
 
-// startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start a pomodoro session",
-	Long:  `Use this command to just start working...`,
+	Long: `Start [godoro start] initiates a new Pomodoro session for a defined duration of time.
+
+Examples:
+  # Start a Pomodoro session using default settings
+  godoro start
+
+  # Start a 45-minute Pomodoro session with tags 'work' and 'priority'
+  godoro start -m 45 -t work,priority
+`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var mode int
-
-		if cmd.Flags().Changed("seconds") || cmd.Flags().Changed("minutes") ||
-			cmd.Flags().Changed("hours") {
-			mode = TimerMode
-		} else {
-			mode = StopwatchMode
-		}
-
-		switch mode {
-		case TimerMode:
-			log.Info().
-				Int("seconds", secs).
-				Int("minutes", mins).
-				Int("hours", hours).
-				Msg("Timer mode")
-
-			timer := timeutil.NewTimer(
-				time.Duration(secs)*time.Second,
-				time.Duration(mins)*time.Minute,
-				time.Duration(hours)*time.Hour,
-			)
-			timer.Start()
-		case StopwatchMode:
-			log.Info().Msg("Stopwatch mode")
-			sw := timeutil.NewStopwatch()
-			sw.Start()
-			interruptChan := make(chan os.Signal, 1)
-			signal.Notify(interruptChan, os.Interrupt)
-
-			<-interruptChan // Block until we receive a signal on the channel
-
-			// Print the elapsed time with 2 decimal places
-			fmt.Printf("Elapsed time: %.2f seconds\n", sw.Stop().Seconds())
-
-		default:
-			log.Fatal().Msg("Unknown time mode...")
+		log.Debug().Msg("Running start...")
+		fmt.Printf("Seconds passed in '%v'\n", FLAG_SECOND)
+		fmt.Printf("Minutes passed in '%v'\n", FLAG_MINUTE)
+		fmt.Printf("Hours passed in '%v'\n", FLAG_HOUR)
+		for _, el := range FLAG_TAGS {
+			fmt.Printf("Tag: '%v'\n", el)
 		}
 	},
 }
@@ -69,7 +40,15 @@ var startCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(startCmd)
 
-	startCmd.Flags().IntVarP(&secs, "seconds", "s", 0, "Number of seconds to run the session")
-	startCmd.Flags().IntVarP(&mins, "minutes", "m", 0, "Number of minutes to run the session")
-	startCmd.Flags().IntVarP(&hours, "hours", "o", 0, "Number of hours to run the session")
+	startCmd.Flags().
+		IntVarP(&FLAG_SECOND, "second", "s", 0, "Specify the duration of the Pomodoro session in seconds. Optional")
+
+	startCmd.Flags().
+		IntVarP(&FLAG_MINUTE, "minute", "m", 30, "Specify the duration of the Pomodoro session in minutes. Optional")
+
+	startCmd.Flags().
+		IntVarP(&FLAG_HOUR, "hour", "o", 0, "Specify the duration of the Pomodoro session in hours. Optional")
+
+	startCmd.Flags().
+		VarP(&FLAG_TAGS, "tags", "t", "Specify the tags of the Pomodoro session. Optional")
 }

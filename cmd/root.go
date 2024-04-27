@@ -1,37 +1,34 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
-	"strings"
 
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var (
-	cfgFile string
-	tags    string
-)
+var cfgFile string
 
-// > app
 var rootCmd = &cobra.Command{
 	Use:   "godoro",
-	Short: "A simple pomodoro CLI written in Go",
-	Long:  `Manage your life or something...`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Welcome!")
-
-		for _, tag := range strings.Fields(tags) {
-			fmt.Printf("Tag: %v\n", tag)
-		}
-	},
+	Short: "A simple CLI pomodoro tool written in Go",
+	Long: `                   .___                   
+   ____   ____   __| _/___________  ____  
+  / ___\ /  _ \ / __ |/  _ \_  __ \/  _ \ 
+ / /_/  >  <_> ) /_/ (  <_> )  | \(  <_> )
+ \___  / \____/\____ |\____/|__|   \____/ 
+/_____/             \/                    
+A CLI tool that let's you create and manage
+multiple pomodoro sessions. Additionally,
+you can view stats about your different
+sessions as well as set tags for each session.`,
 }
 
-// Initialize child commands and flags
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
+		log.Error().Msg("Something went wrong with cobra...")
 		os.Exit(1)
 	}
 }
@@ -41,31 +38,26 @@ func init() {
 
 	rootCmd.PersistentFlags().
 		StringVar(&cfgFile, "config", "", "config file (default is $HOME/.godoro.yaml)")
-
-	rootCmd.PersistentFlags().
-		StringVarP(&tags, "tags", "t", "", "Tags for the session")
 }
 
-// initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	if cfgFile != "" {
-		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
 		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
+		if err != nil {
+			log.Error().Msg("Unable to get user's home directory")
+			os.Exit(1)
+		}
 
-		// Search config in home directory with name ".godoro" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(".godoro")
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
+	viper.AutomaticEnv()
 
-	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		log.Warn().Msgf("Using config file: %s", viper.ConfigFileUsed())
 	}
 }
