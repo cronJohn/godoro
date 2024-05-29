@@ -1,20 +1,22 @@
 package util
 
-import "strings"
+import (
+	"strings"
+)
 
-type FlagList []string
+type TagList []string
 
-func (t *FlagList) Set(value string) error {
+func (t *TagList) Set(value string) error {
 	*t = strings.FieldsFunc(value, func(r rune) bool {
 		return r == ',' || r == ' '
 	})
 	return nil
 }
 
-func (t *FlagList) String() string {
+func (t *TagList) String() string {
 	return strings.Join(*t, ",")
 }
 
-func (t *FlagList) Type() string {
-	return "FlagList"
+func (t *TagList) Type() string {
+	return "TagList"
 }
