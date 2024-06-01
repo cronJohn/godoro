@@ -7,11 +7,17 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+const (
+	WORKING = iota
+	BREAKING
+)
+
 // PomoSession represents data related to how long the pomodoro work
 // and break session should be
 type PomoSession struct {
 	WorkDuration  time.Duration
 	BreakDuration time.Duration
+	State         int
 }
 
 // PomoData represents data related to the pomodoro session

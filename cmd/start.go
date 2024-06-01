@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"context"
+	"os"
 	"time"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
@@ -47,13 +49,20 @@ func init() {
 func handleCmd(cmd *cobra.Command, args []string) {
 	log.Debug().Msg("Running start...")
 
-	ctx, _ := context.WithCancel(context.Background())
-	pm := pomomgr.NewPomoMgr(FLAG_WORK_DURATION, FLAG_BREAK_DURATION, ctx)
+	pm := pomomgr.NewPomoMgr(FLAG_WORK_DURATION, FLAG_BREAK_DURATION, context.Background())
 
 	go func() {
 		pm.Start(FLAG_TAGS)
 	}()
 
-	for {
+	m := pomomgr.NewProgressModel(pomomgr.PomoSession{
+		WorkDuration:  FLAG_WORK_DURATION,
+		BreakDuration: FLAG_BREAK_DURATION,
+		State:         pomomgr.WORKING,
+	})
+
+	if _, err := tea.NewProgram(m).Run(); err != nil {
+		log.Error().Msg("Something went wrong...")
+		os.Exit(1)
 	}
 }
