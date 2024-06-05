@@ -1,0 +1,17 @@
+syntax = "proto3";
+package dapter;
+
+import "google/protobuf/duration.proto";
+
+option go_package = "./proto";
+
+message PomoSession {
+    int32 id = 1;
+    google.protobuf.Duration work_duration = 2;
+    google.protobuf.Duration break_duration = 3;
+    repeated string tags = 4;
+}
+
+message PomoSessions {
+  repeated PomoSession sessions = 1;
+}

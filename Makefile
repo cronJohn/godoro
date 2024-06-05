@@ -23,4 +23,7 @@ clean:
 	rm -f $(BINARY_NAME)$(MAC_SUF)
 	rm -f $(BINARY_NAME)$(WIN_SUF)
 
-.PHONY: build build-linux build-macos build-windows run clean
+protoc:
+	@protoc --go_out=./pkg/dapter/ ./pkg/dapter/data.proto
+
+.PHONY: build build-linux build-macos build-windows run clean protoc
