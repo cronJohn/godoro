@@ -24,6 +24,6 @@ clean:
 	rm -f $(BINARY_NAME)$(WIN_SUF)
 
 protoc:
-	@protoc --go_out=./pkg/dapter/ ./pkg/dapter/data.proto
+	@protoc --go_out=./pkg/serdes/proto/ ./pkg/serdes/proto/*.proto
 
 .PHONY: build build-linux build-macos build-windows run clean protoc

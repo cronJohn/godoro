@@ -1,9 +1,9 @@
 syntax = "proto3";
-package dapter;
+package serdes;
 
 import "google/protobuf/duration.proto";
 
-option go_package = "./proto";
+option go_package = "./compiled";
 
 message PomoSession {
     int32 id = 1;
